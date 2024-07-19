@@ -3,7 +3,8 @@ import { parsePath } from 'ufo'
 import type { LinkSchema } from '@/schemas/link'
 
 export default eventHandler(async (event) => {
-  const { pathname: slug, search } = parsePath(event.path.slice(1)) // remove leading slash
+  const { pathname: complexSlug, search } = parsePath(event.path.slice(1)) // remove leading slash
+  const slug = complexSlug.includes("/") ? complexSlug.split("/")[0] : complexSlug;
   const { slugRegex, reserveSlug } = useAppConfig(event)
   const { homeURL } = useRuntimeConfig(event)
   const { cloudflare } = event.context
@@ -23,11 +24,8 @@ export default eventHandler(async (event) => {
         console.error('Failed write access log:', error)
       }
 
-      // Extract the remaining path after the slug
-      const remainingPath = event.path.slice(slug.length + 1) + (search ? `?${search}` : '')
-
       // Append the remaining path to the link URL
-      const targetUrl = `${link.url}${remainingPath}`
+      const targetUrl = complexSlug.includes("/") ? `${link.url}/${complexSlug.split("/")[1]}` : `${link.url}`
 
       return sendRedirect(event, targetUrl, +useRuntimeConfig(event).redirectStatusCode)
     }
