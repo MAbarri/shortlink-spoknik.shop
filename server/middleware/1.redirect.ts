@@ -25,7 +25,10 @@ export default eventHandler(async (event) => {
       }
 
       // Append the remaining path to the link URL
-      const targetUrl = complexSlug.includes("/") ? `${link.url}/${complexSlug.split("/")[1]}` : `${link.url}`
+      const targetUrl = complexSlug.includes("/")
+        ? `${link.url}/${complexSlug.substring(complexSlug.indexOf("/") + 1)}`
+        : `${link.url}`;
+
 
       return sendRedirect(event, targetUrl, +useRuntimeConfig(event).redirectStatusCode)
     }
