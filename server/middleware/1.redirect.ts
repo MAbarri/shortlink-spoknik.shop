@@ -26,7 +26,7 @@ export default eventHandler(async (event) => {
 
       // Append the remaining path to the link URL
       const targetUrl = complexSlug.includes("/")
-        ? `${link.url}/${complexSlug}`
+        ? `${link.url}/${complexSlug.substring(complexSlug.indexOf("/") + 1)}`
         : `${link.url}`;
 
 
